@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
+from django.contrib.auth.models import User
+from django.contrib import messages
 from .forms import RegistrationForm, OrderForm
 from .models import Product
 import requests
@@ -10,15 +11,21 @@ def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            use
-r = form.save(commit=False)
-            user.set_password(form.cleaned_data['password'])
-            user.save()
-            login(request, user)
-            return redirect('catalog')
-    else:
-        form = RegistrationForm()
-    return render(request, 'register.html', {'form': form})
+            # Получаем данные из формы
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            email = form.cleaned_data.get('email')
+            # Создаем нового пользователя
+            user = User.objects.create_user(username=username, password=password, email=email)
+            user.save()  # Сохраняем пользователя в базе данных
+
+            messages.success(request, 'Вы успешно зарегистрировались!')
+            return redirect('login')  # Перенаправляем на страницу входа или другую страницу
+        else:
+            form = RegistrationForm()  # Создаем пустую форму для GET-запроса
+
+        return render(request, 'registration/register.html', {'form': form})
+
 
 def catalog(request):
     products = Product.objects.all()
