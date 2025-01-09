@@ -7,6 +7,9 @@ import requests
 
 TELEGRAM_API_URL = 'https://api.telegram.org/bot<your_bot_token>/sendMessage'
 
+def home(request):
+    return render(request, 'shop/home.html')
+
 def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
@@ -21,15 +24,15 @@ def register(request):
 
             messages.success(request, 'Вы успешно зарегистрировались!')
             return redirect('login')  # Перенаправляем на страницу входа или другую страницу
-        else:
-            form = RegistrationForm()  # Создаем пустую форму для GET-запроса
+    else:
+        form = RegistrationForm()  # Создаем пустую форму для GET-запроса
 
-        return render(request, 'registration/register.html', {'form': form})
+    return render(request, 'shop/register.html', {'form': form})
 
 
 def catalog(request):
     products = Product.objects.all()
-    return render(request, 'catalog.html', {'products': products})
+    return render(request, 'shop/catalog.html', {'products': products})
 
 def order(request):
     if request.method == 'POST':
@@ -44,7 +47,7 @@ def order(request):
             return redirect('catalog')
     else:
         form = OrderForm()
-    return render(request, 'order.html', {'form': form})
+    return render(request, 'shop/order.html', {'form': form})
 
 def send_telegram_notification(order):
     message = f"Новый заказ:\n" \
