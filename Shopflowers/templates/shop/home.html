@@ -5,10 +5,69 @@
     <meta charset="UTF-8">
     <title>Магазин цветов</title>
     <link rel="stylesheet" type="text/css" href="{% static 'shop/style.css' %}">
+      <style>
+        body {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        .left-column {
+            width: 30%;
+            padding: 10px;
+        }
+        .right-column {
+            width: 65%;
+            padding: 10px;
+        }
+        .flower-catalog {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .flower-item {
+            width: 30%;
+            margin: 10px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <h1>Добро пожаловать</h1>
-    <h2><a href="{% url 'register' %}">Регистрация</a> </h2>
-    <h2><a href="{% url 'login' %}">Вход</a> </h2>
+    <div class="left-column">
+        <h1>Добро пожаловать</h1>
+        <h2><a href="{% url 'register' %}">Регистрация</a></h2>
+        <h2><a href="{% url 'login' %}">Вход</a></h2>
+
+        <h2>Заказ цветов</h2>
+        <form action="{% url 'order' %}" method="POST">
+            {% csrf_token %}
+
+            <button type="submit">Заказать</button>
+        </form>
+    </div>
+
+    <div class="right-column">
+        <h2>Каталог цветов</h2>
+        <div class="flower-catalog">
+            <div class="flower-item">
+                <img src="{% static 'image/gagarin.png' %}" alt="Роза" style="width:100%;">
+                <h3>Роза</h3>
+                <p>Цена: 500 руб.</p>
+                <input type="checkbox" name="flowers" value="Роза"> Выбрать
+            </div>
+            <div class="flower-item">
+                <img src="{% static 'image/tulip.jpg' %}" alt="Тюльпан" style="width:100%;">
+                <h3>Тюльпан</h3>
+                <p>Цена: 300 руб</p>
+
+                <input type="checkbox" name="flowers" value="Тюльпан"> Выбрать
+            </div>
+            <div class="flower-item">
+                <img src="{% static 'image/lily.jpg' %}" alt="Лилия" style="width:100%;">
+                <h3>Лилия</h3>
+                <p>Цена: 450 руб.</p>
+                <input type="checkbox" name="flowers" value="Лилия"> Выбрать
+            </div>
+            <!-- Добавьте больше цветов по необходимости -->
+        </div>
+    </div>
 </body>
 </html>

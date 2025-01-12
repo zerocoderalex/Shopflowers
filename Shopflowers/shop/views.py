@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
 from .forms import UserRegisterForm, OrderForm
 from django.contrib import messages
 from .models import Product
@@ -45,19 +46,20 @@ def catalog(request):
     products = Product.objects.all()
     return render(request, 'shop/catalog.html', {'products': products})
 
+
+#@login_required
 def order(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = OrderForm(request.POST)
         if form.is_valid():
-            order = form.save(commit=False)
-            order.user = request.user
-            order.save()
-            order.products.set(form.cleaned_data['products'])
-            order.save()
-            send_telegram_notification(order)
-            return redirect('catalog')
+            order = form.save(commit=False)  # Не сохраняем еще в БД
+            order.user = request.user  # Привязываем заказ к текущему пользователю
+            order.save()  # Сохраняем заказ
+            form.save_m2m()  # Сохраняем связь ManyToMany (продукты)
+            return redirect('home')  # Перенаправление на страницу успеха
     else:
         form = OrderForm()
+
     return render(request, 'shop/order.html', {'form': form})
 
 def send_telegram_notification(order):
