@@ -2,8 +2,10 @@
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path
+import importlib
 
-from shop import views
+views = importlib.import_module('shop.views')
+
 
 
 
