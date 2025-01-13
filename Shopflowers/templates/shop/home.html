@@ -39,7 +39,7 @@
         <h2>Заказ цветов</h2>
         <form action="{% url 'order' %}" method="POST">
             {% csrf_token %}
-
+            {{ form.as_p }}
             <button type="submit">Заказать</button>
         </form>
     </div>
@@ -48,20 +48,20 @@
         <h2>Каталог цветов</h2>
         <div class="flower-catalog">
             <div class="flower-item">
-                <img src="{% static 'image/gagarin.png' %}" alt="Роза" style="width:100%;">
+                <img src="{% static 'shop/image/gagarin.png' %}" alt="Роза" style="width:100%;">
                 <h3>Роза</h3>
                 <p>Цена: 500 руб.</p>
                 <input type="checkbox" name="flowers" value="Роза"> Выбрать
             </div>
             <div class="flower-item">
-                <img src="{% static 'image/tulip.jpg' %}" alt="Тюльпан" style="width:100%;">
+                <img src="{% static 'shop/image/tulip.jpg' %}" alt="Тюльпан" style="width:100%;">
                 <h3>Тюльпан</h3>
                 <p>Цена: 300 руб</p>
 
                 <input type="checkbox" name="flowers" value="Тюльпан"> Выбрать
             </div>
             <div class="flower-item">
-                <img src="{% static 'image/lily.jpg' %}" alt="Лилия" style="width:100%;">
+                <img src="{% static 'shop/image/lily.jpg' %}" alt="Лилия" style="width:100%;">
                 <h3>Лилия</h3>
                 <p>Цена: 450 руб.</p>
                 <input type="checkbox" name="flowers" value="Лилия"> Выбрать

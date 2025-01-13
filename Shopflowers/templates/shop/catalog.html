@@ -1,7 +1,9 @@
 {% extends 'shop/home.html' %}
+{% load static %}
 
 <h1>Catalog</h1>
 <ul>
+    {% csrf_token %}
     {% for product in products %}
         <li>{{ product.name }} - {{ product.price }} <a href="{% url 'order' %}">Order</a></li>
     {% endfor %}

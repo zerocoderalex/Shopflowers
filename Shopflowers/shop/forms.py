@@ -14,4 +14,4 @@ class UserRegisterForm(UserCreationForm):
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ['delivery_address', 'products']
+        fields = ['quantity', 'products']
