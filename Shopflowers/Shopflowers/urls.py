@@ -1,18 +1,21 @@
 
 from django.contrib import admin
-from django.contrib.auth import views as auth_views
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import path
-import importlib
-
-views = importlib.import_module('shop.views')
+import shop.views as views
 
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('register/', views.register, name='register'),
-    path('login/', views.login_view, name='login'),
+    path('cart/', views.cart, name='cart'),
     path('', views.home, name='home'),
     path('order/', views.order, name='order'),
-    path('catalog/', views.catalog, name='catalog'),
-]
+    path('products/', views.products, name='products'),
+    path('add-to-cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
+    path('update-cart/<int:product_id>/', views.update_cart, name='update_cart'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+

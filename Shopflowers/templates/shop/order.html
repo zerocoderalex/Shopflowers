@@ -1,9 +1,0 @@
-{% extends 'shop/home.html' %}
-{% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'shop/style.css' %}">
-
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Place Order</button>
-</form>

@@ -1,0 +1,156 @@
+/* Общие стили */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa;
+    color: #343a40;
+}
+
+/* Навигация */
+.navbar {
+    border-bottom: 2px solid #ffc107;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.navbar-nav .nav-link {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #ffc107;
+}
+
+/* Главная страница */
+h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #343a40;
+}
+
+p {
+    font-size: 1.2rem;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Карточки цветов */
+.product-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.product-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 280px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+.product-image {
+    width: auto;
+    height: 200px;
+    object-fit: cover;
+}
+
+.product-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 15px;
+}
+
+.product-price {
+    font-size: 1rem;
+    color: #28a745;
+    margin: 0 15px 15px;
+}
+
+.btn-buy {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background-color: #ffc107;
+    color: white;
+    padding: 10px;
+    text-transform: uppercase;
+    font-weight: bold;
+    border: none;
+    border-radius: 0 0 8px 8px;
+    transition: background-color 0.2s;
+}
+
+.btn-buy:hover {
+    background-color: #e0a800;
+}
+
+/* Корзина */
+table {
+    width: 100%;
+    margin-bottom: 30px;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+}
+
+th {
+    background-color: #f1f1f1;
+}
+
+td {
+    font-size: 1rem;
+}
+
+.btn-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    color: white;
+    background-color: #343a40;
+    border: none;
+    border-radius: 5px;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.btn:hover {
+    background-color: #495057;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.text-center {
+    width: auto; /* Измените на нужную ширину */
+    height: auto; /* Высота может быть авто, чтобы сохранить пропорции */
+}

@@ -1,70 +1,87 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.decorators import login_required
-from .forms import UserRegisterForm, OrderForm
-from django.contrib import messages
-from .models import Product
-import requests
+from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.crypto import get_random_string
+from .models import Product, Order, OrderItem, User
 
-TELEGRAM_API_URL = 'https://api.telegram.org/bot<your_bot_token>/sendMessage'
+
 
 def home(request):
-    return render(request, 'shop/home.html')
+    return render(request, 'home.html')
 
-def register(request):
-    if request.method == 'POST':
-        form = UserRegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Вы успешно зарегистрировались!')
-            return  redirect('login')
+
+def products(request):
+    all_products = Product.objects.all()
+    return render(request, 'products.html', {'products': all_products})
+
+
+def cart(request):
+    cart_items = request.session.get('cart', {})
+    products = []
+    total_price = 0
+
+    for product_id, quantity in cart_items.items():
+        product = Product.objects.get(id=product_id)
+        products.append({'product': product, 'quantity': quantity, 'total': product.price * quantity})
+        total_price += product.price * quantity
+
+    return render(request, 'cart.html', {'products': products, 'total_price': total_price})
+
+def add_to_cart(request, product_id):
+    cart = request.session.get('cart', {})
+    cart[str(product_id)] = cart.get(str(product_id), 0) + 1
+    request.session['cart'] = cart
+    return redirect('cart')
+
+def update_cart(request, product_id):
+    cart = request.session.get('cart', {})
+    action = request.GET.get('action')
+
+    if action == 'increment':
+        cart[str(product_id)] = cart.get(str(product_id), 0) + 1
+    elif action == 'decrement':
+        if str(product_id) in cart and cart[str(product_id)] > 1:
+            cart[str(product_id)] -= 1
         else:
-            messages.error(request, 'Произошла ошибка, проверьте данные.')
-
-    else:
-        form = UserRegisterForm()  # Создаем пустую форму для GET-запроса
-
-    return render(request, 'shop/register.html', {'form': form})
-
-def login_view(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            messages.success(request, 'Вы успешно вошли!')
-            return redirect('home')
-        else:
-            messages.error(request, 'Произошла ошибка, проверьте данные.')
-    else:
-        form = AuthenticationForm()
-    return render(request, 'shop/login.html', {'form': form})
+            cart.pop(str(product_id), None),
+    request.session['cart'] = cart
+    return redirect('cart')
 
 
-def catalog(request):
-    products = Product.objects.all()
-    return render(request, 'shop/catalog.html', {'products': products})
-
-
-#@login_required
 def order(request):
-    if request.method == "POST":
-        form = OrderForm(request.POST)
-        if form.is_valid():
-            order = form.save(commit=False)  # Не сохраняем еще в БД
-            order.user = request.user  # Привязываем заказ к текущему пользователю
-            order.save()  # Сохраняем заказ
-            form.save_m2m()  # Сохраняем связь ManyToMany (продукты)
-            return redirect('home')  # Перенаправление на страницу успеха
-    else:
-        form = OrderForm()
+    cart = request.session.get('cart', {})
+    if not cart:
+        return render(request, 'order.html', {'message': 'Корзина пуста!'})
 
-    return render(request, 'shop/order.html', {'form': form})
+    if request.method == 'POST':
+        full_name = request.POST.get('full_name')
+        email = request.POST.get('email')
+        address = request.POST.get('address')
 
-def send_telegram_notification(order):
-    message = f"Новый заказ:\n" \
-              f"Пользователь: {order.user.username}\n" \
-              f"Адрес доставки: {order.delivery_address}\n" \
-              f"Товары: {', '.join([str(product) for product in order.products.all()])}"
-    requests.post(TELEGRAM_API_URL, data={'chat_id': '<your_chat_id>', 'text': message})
+        if not (full_name and email and address):
+            return render(request, 'order.html', {'message': 'Все поля обязательны!'})
+
+        # Создаём пользователя
+        user = User.objects.create(full_name=full_name, email=email, address=address)
+
+        # Создаём заказ
+        order_key = get_random_string(10)
+        order = Order.objects.create(user=user, status='pending', order_key=order_key)
+
+        # Добавляем цветы в заказ
+        for product_id, quantity in cart.items():
+            product = Product.objects.get(id=product_id)
+            OrderItem.objects.create(order=order, product=product, quantity=quantity)
+
+        # Очищаем корзину
+        request.session['cart'] = {}
+
+        # Передаем дату создания заказа в контекст
+        return render(request, 'order.html', {
+            'order_key': order_key,
+            'created_at': order.created_at,
+            'message': 'Заказ успешно оформлен!'
+        })
+
+        return render(request, 'order.html', {'order_key': order_key, 'message': 'Заказ успешно оформлен!'})
+
+    return render(request, 'order.html')
+

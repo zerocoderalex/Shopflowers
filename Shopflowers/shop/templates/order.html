@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Заказ{% endblock %}
+
+{% block content %}
+<h1>Оформление заказа</h1>
+
+{% if message %}
+<p>{{ message }}</p>
+{% endif %}
+
+{% if created_at %}
+    <p>Дата заказа: {{ created_at|date:"d.m.Y H:i:s" }}</p>
+{% endif %}
+
+{% if order_key %}
+    <p>
+        (ВАЖНО!) Сохраните ваш уникальный ключ заказа: <strong>{{ order_key }}</strong><br>
+        С помощью ключа вы можете узнать статус заказа с телеграм-боте @zero_bookshop_bot
+    </p>
+    <div class="btn-container">
+        <a href="/" class="btn">На главную</a>
+    </div>
+{% else %}
+<form method="post">
+    {% csrf_token %}
+    <label for="full_name">ФИО:</label>
+    <input type="text" id="full_name" name="full_name" required>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+    <label for="address">Адрес:</label>
+    <textarea id="address" name="address" required></textarea>
+    <button type="submit" class="btn">Оформить заказ</button>
+</form>
+{% endif %}
+{% endblock %}
