@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.utils.crypto import get_random_string
 from .models import Product, Order, OrderItem, User
 
