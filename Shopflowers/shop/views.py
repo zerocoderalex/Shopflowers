@@ -81,7 +81,5 @@ def order(request):
             'message': 'Заказ успешно оформлен!'
         })
 
-        return render(request, 'order.html', {'order_key': order_key, 'message': 'Заказ успешно оформлен!'})
-
     return render(request, 'order.html')
 

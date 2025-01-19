@@ -8,4 +8,14 @@
 <div class="btn-container">
     <a href="/products/" class="btn">Перейти к ассортименту</a>
 </div>
+
+<div class="auth-container">
+    {% if user.is_authenticated %}
+        <p>Привет, {{ user.username }}!</p>
+        <a href="{% url 'account_logout' %}" class="btn">Выйти</a>
+    {% else %}
+        <a href="{% url 'account_login' %}" class="btn">Войти</a>
+        <a href="{% url 'account_signup' %}" class="btn">Регистрация</a>
+    {% endif %}
+</div>
 {% endblock %}
