@@ -3,7 +3,10 @@ import logging
 
 # Путь к базе данных (скорректируй путь в зависимости от расположения)
 DB_PATH = "../Shopflowers/db.sqlite3"
-
+# Роутеры
+router = Router()
+API_HOST = "127.0.0.1"
+API_PORT = 8002
 
 def get_user_and_order_status(order_id):
     conn = sqlite3.connect(DB_PATH)
@@ -68,3 +71,44 @@ def get_order_status(order_key):
         conn.close()
         logging.error(f"Database error: {e}")
         return None
+
+    async def notify_user(telegram_id: int, order_key: str):
+        """
+        Уведомляет пользователя о смене статуса заказа.
+        """
+        try:
+            status = get_order_status(order_key)['status']
+            message = f"Статус вашего заказа {order_key} изменён на {status}."
+            await bot.send_message(chat_id=telegram_id, text=message)
+        except Exception as e:
+            print(f"Ошибка при отправке уведомления: {e}")
+
+    async def handle_notification(request):
+        """
+        Обрабатывает входящий HTTP-запрос для уведомления пользователя.
+        """
+        data = await request.json()
+
+        telegram_id = data.get("telegram_id")
+        order_key = data.get("order_key")
+
+        if not telegram_id or not order_key:
+            return web.json_response({"error": "Invalid data"}, status=400)
+
+        # Уведомляем пользователя
+        await notify_user(telegram_id, order_key)
+
+        return web.json_response({"success": True})
+
+        app = web.Application()
+        dp.include_router(router)
+
+        # Регистрируем API-эндпоинт
+        app.router.add_post("/notify", handle_notification)
+        # Запускаем сервер
+        runner = web.AppRunner(app)
+        await runner.setup()
+        site = web.TCPSite(runner, API_HOST, API_PORT)
+        await site.start()
+
+        print(f"API запущено на {API_HOST}:{API_PORT}")
