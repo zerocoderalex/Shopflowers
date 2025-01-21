@@ -70,7 +70,8 @@ def order(request):
         for product_id, quantity in cart.items():
             product = Product.objects.get(id=product_id)
             OrderItem.objects.create(order=order, product=product, quantity=quantity)
-
+            delivery_time = order.delivery_time
+            delivery_address = order.delivery_address
         # Очищаем корзину
         request.session['cart'] = {}
 
@@ -78,6 +79,8 @@ def order(request):
         return render(request, 'order.html', {
             'order_key': order_key,
             'created_at': order.created_at,
+            'delivery_address': delivery_address,
+            'delivery_time': delivery_time,
             'message': 'Заказ успешно оформлен!'
         })
 

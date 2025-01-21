@@ -1,5 +1,8 @@
 from django.db import models
 import os
+from django.utils import timezone
+from datetime import timedelta, datetime
+
 
 class Product(models.Model):
     name = models.CharField(max_length=255, verbose_name='Название')
@@ -38,6 +41,36 @@ class Order(models.Model):
         verbose_name='Статус'
     )
     order_key = models.CharField(max_length=20, unique=True, verbose_name='Ключ заказа')
+
+    delivery_address = models.TextField(default='', verbose_name='Адрес доставки')
+    delivery_time = models.DateTimeField(verbose_name='Время доставки')
+
+    def save(self, *args, **kwargs):
+
+        # Если адрес доставки не задан, берем его из пользователя
+        if not self.delivery_address and self.user:
+            self.delivery_address = self.user.address
+
+        if not self.delivery_time:  # Устанавливаем только, если значение не задано
+            if self.created_at:  # Проверяем, что created_at не None
+                self.delivery_time = self.created_at + timedelta(hours=24)
+            else:
+                self.delivery_time = timezone.now() + timedelta(hours=24)  # Или любое другое значение по умолчанию
+        super().save(*args, **kwargs)
+
+    def delivery_info(self):
+        # Проверяем, что created_at не None
+        if self.created_at:
+            delivery_time = self.created_at + timedelta(hours=24)
+        else:
+            delivery_time = timezone.now() + timedelta(hours=24)  # Или любое другое значение по умолчанию
+
+        delivery_address = self.delivery_address  # Исправлено, чтобы использовать self.user
+
+        return {
+            'delivery_time': delivery_time,
+            'delivery_address': self.delivery_address,
+        }
 
     def __str__(self):
         return f"Заказ {self.id} ({self.user.full_name})"

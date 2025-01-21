@@ -13,6 +13,14 @@
     <p>Дата заказа: {{ created_at|date:"d.m.Y H:i:s" }}</p>
 {% endif %}
 
+{% if created_at %}
+    <p>Дата доставки: {{ delivery_time }}</p>
+{% endif %}
+
+{% if created_at %}
+    <p>Адрес доставки: {{ delivery_address }}</p>
+{% endif %}
+
 {% if order_key %}
     <p>
         (ВАЖНО!) Сохраните ваш уникальный ключ заказа: <strong>{{ order_key }}</strong><br>

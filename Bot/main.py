@@ -3,7 +3,7 @@ import sqlite3
 import os
 
 from aiohttp import web
-from aiogram import Bot, Dispatcher, html, Router
+from aiogram import Bot, Dispatcher, html
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
@@ -29,17 +29,20 @@ def get_order_status(order_key):
     try:
         # Выполняем запрос для получения информации о заказе
         cursor.execute("""
-            SELECT o.status, GROUP_CONCAT(b.name || ' x ' || oi.quantity, ', ') AS items
+            SELECT o.status, o.delivery_time, o.delivery_address,
+            GROUP_CONCAT(p.name || ' x ' || oi.quantity, ', ')
+            AS items
             FROM shop_order o
             JOIN shop_orderitem oi ON o.id = oi.order_id
-            JOIN shop_product b ON oi.product_id = b.id
+            JOIN shop_product p ON oi.product_id = p.id
             WHERE o.order_key = ?
         """, (order_key,))
         result = cursor.fetchone()
         conn.close()
 
         if result and result[0]:
-            return {"status": result[0], "items": result[1]}
+            return {"status": result[0], "delivery_time": result[1],
+            "delivery_address" :result[2], "items": result[3]}
         return None
     except sqlite3.Error as e:
         conn.close()
@@ -69,6 +72,8 @@ async def order_status_handler(message: Message) -> None:
         await message.answer(
             f"Статус заказа: {html.bold(order_data['status'])}\n"
             f"Содержимое заказа: {html.code(order_data['items'])}"
+            f"Время доставки: {html.code(order_data['delivery_time'])}"
+            f"Место доставки: {html.code(order_data['delivery_address'])}"
         )
     else:
         await message.answer(
