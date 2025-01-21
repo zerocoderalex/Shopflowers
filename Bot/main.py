@@ -75,7 +75,7 @@ async def order_status_handler(message: Message) -> None:
             "Не удалось найти заказ с таким ключом. Проверьте ключ и попробуйте снова."
         )
 
-
+# Запуск бота
 async def main() -> None:
     bot = Bot(TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     try:

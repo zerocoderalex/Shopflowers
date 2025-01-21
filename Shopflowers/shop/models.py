@@ -1,5 +1,5 @@
 from django.db import models
-
+import os
 
 class Product(models.Model):
     name = models.CharField(max_length=255, verbose_name='Название')
@@ -8,6 +8,13 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    def delete(self, *args, **kwargs):
+        # Удаляем файл изображения из файловой системы
+        if self.image:
+            if os.path.isfile(self.image.path):
+                os.remove(self.image.path)
+        super().delete(*args, **kwargs)
 
 class User(models.Model):
     full_name = models.CharField(max_length=255, verbose_name='ФИО')
