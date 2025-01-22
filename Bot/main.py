@@ -29,7 +29,7 @@ def get_order_status(order_key):
     try:
         # Выполняем запрос для получения информации о заказе
         cursor.execute("""
-            SELECT o.status, o.delivery_time, o.delivery_address,
+            SELECT o.status, o.delivery_time, o.delivery_address, p.image, 
             GROUP_CONCAT(p.name || ' x ' || oi.quantity, ', ')
             AS items
             FROM shop_order o
@@ -42,7 +42,7 @@ def get_order_status(order_key):
 
         if result and result[0]:
             return {"status": result[0], "delivery_time": result[1],
-            "delivery_address" :result[2], "items": result[3]}
+            "delivery_address": result[2], "image": result[3], "items": result[4]}
         return None
     except sqlite3.Error as e:
         conn.close()
@@ -74,6 +74,7 @@ async def order_status_handler(message: Message) -> None:
             f"Содержимое заказа: {html.code(order_data['items'])}"
             f"Время доставки: {html.code(order_data['delivery_time'])}"
             f"Место доставки: {html.code(order_data['delivery_address'])}"
+            f"Изображение: {html.code(order_data['image'])}"
         )
     else:
         await message.answer(

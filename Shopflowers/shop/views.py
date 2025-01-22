@@ -1,5 +1,8 @@
+from aiohttp import request
+from allauth.account.views import email
 from django.shortcuts import render, redirect
 from django.utils.crypto import get_random_string
+from django.contrib.auth.decorators import login_required
 from .models import Product, Order, OrderItem, User
 
 
@@ -60,7 +63,11 @@ def order(request):
             return render(request, 'order.html', {'message': 'Все поля обязательны!'})
 
         # Создаём пользователя
-        user = User.objects.create(full_name=full_name, email=email, address=address)
+        users = User.objects.filter(full_name=full_name, email=email, address=address)
+        if users.exists():
+            user = users.first()  # Берет первого пользователя из QuerySet
+        else:
+            user = User.objects.create(full_name=full_name, email=email, address=address)
 
         # Создаём заказ
         order_key = get_random_string(10)
@@ -85,4 +92,16 @@ def order(request):
         })
 
     return render(request, 'order.html')
+
+
+@login_required
+def order_list(request):
+
+    # Получаем текущего пользователя
+    current_user = User.objects.get(full_name=request.user)
+    # Извлекаем все заказы для этого пользователя
+    orders = Order.objects.filter(user=current_user)
+
+
+    return render(request, 'order_list.html', {'orders': orders})
 

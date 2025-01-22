@@ -11,7 +11,7 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
-
+# Удаление лишних картинок
     def delete(self, *args, **kwargs):
         # Удаляем файл изображения из файловой системы
         if self.image:
@@ -65,7 +65,7 @@ class Order(models.Model):
         else:
             delivery_time = timezone.now() + timedelta(hours=24)  # Или любое другое значение по умолчанию
 
-        delivery_address = self.delivery_address  # Исправлено, чтобы использовать self.user
+        # delivery_address = self.delivery_address  # Исправлено, чтобы использовать self.user
 
         return {
             'delivery_time': delivery_time,
