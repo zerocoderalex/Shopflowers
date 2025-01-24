@@ -1,7 +1,7 @@
 from django.db import models
 import os
 from django.utils import timezone
-from datetime import timedelta, datetime
+from datetime import timedelta
 
 
 class Product(models.Model):
@@ -23,6 +23,7 @@ class User(models.Model):
     full_name = models.CharField(max_length=255, verbose_name='ФИО')
     email = models.EmailField(verbose_name='Email')
     address = models.TextField(verbose_name='Адрес')
+    telegram = models.TextField(blank=True, default='', verbose_name='Телеграмм')
 
     def __str__(self):
         return self.full_name
@@ -68,7 +69,7 @@ class Order(models.Model):
         # delivery_address = self.delivery_address  # Исправлено, чтобы использовать self.user
 
         return {
-            'delivery_time': delivery_time,
+            'delivery_time': self.delivery_time,
             'delivery_address': self.delivery_address,
         }
 
