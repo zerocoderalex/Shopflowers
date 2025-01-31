@@ -95,7 +95,7 @@ async def check_order_status_periodically(order_key, chat_id):
             if chat_id in active_tasks and order_key in active_tasks[chat_id]:
                 del active_tasks[chat_id][order_key]
             return  # Завершаем задачу, если заказ не найден
-        await asyncio.sleep(18)  # Ждем 30 мин перед следующей проверкой
+        await asyncio.sleep(1800)  # Ждем 30 мин перед следующей проверкой
 
 @dp.message()
 async def order_status_handler(message: Message, bot: Bot) -> None:
