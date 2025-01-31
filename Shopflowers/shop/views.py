@@ -1,5 +1,7 @@
 # from aiohttp import request
-# from allauth.account.views import email
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 from django.shortcuts import render, redirect
 from django.utils.crypto import get_random_string
 from django.contrib.auth.decorators import login_required

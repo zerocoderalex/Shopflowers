@@ -9,7 +9,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена')
     image = models.ImageField(upload_to='products/', blank=True, verbose_name='Изображение')
 
-    def __str__(self):
+    def str(self):
         return self.name
 # Удаление лишних картинок
     def delete(self, *args, **kwargs):
@@ -25,7 +25,7 @@ class User(models.Model):
     address = models.TextField(verbose_name='Адрес')
     telegram = models.TextField(blank=True, default='', verbose_name='Телеграмм')
 
-    def __str__(self):
+    def str(self):
         return self.full_name
 
 class Order(models.Model):
@@ -73,7 +73,7 @@ class Order(models.Model):
             'delivery_address': self.delivery_address,
         }
 
-    def __str__(self):
+    def str(self):
         return f"Заказ {self.id} ({self.user.full_name})"
 
 
@@ -83,9 +83,5 @@ class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Цветы')
     quantity = models.PositiveIntegerField(default=1, verbose_name='Количество')
 
-    def __str__(self):
+    def str(self):
         return f"{self.product.name} x {self.quantity}"
-
-
-
-
