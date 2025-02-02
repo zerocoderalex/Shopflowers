@@ -1,7 +1,4 @@
-# from aiohttp import request
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-import json
+
 from django.shortcuts import render, redirect
 from django.utils.crypto import get_random_string
 from django.contrib.auth.decorators import login_required
@@ -50,7 +47,7 @@ def update_cart(request, product_id):
     request.session['cart'] = cart
     return redirect('cart')
 
-
+@login_required
 def order(request):
     cart = request.session.get('cart', {})
     if not cart:
