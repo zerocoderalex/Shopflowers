@@ -53,7 +53,10 @@
      ```bash
      python bot.py
      ```
-
+6.Запуск тестов:
+    - Тесты models.py, views.py b url.py находятся в папке shop/tests.
+    - Тесты bota в папке Bot.
+    - Запуск тестов осуществляется командой: python manage.py test.
 ---
 
 ## Структура проекта
